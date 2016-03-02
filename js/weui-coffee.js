@@ -1,5 +1,5 @@
 /**
- * Created by 55hudong on 2016/3/1.
+ * Created by 冷色的咖啡 on 2016/3/1.
  */
 
 'use strict';
@@ -271,19 +271,60 @@ WeLoading.prototype = WeToast.prototype;
 /**
  * ActionSheet提示框
  * @param selector 选择器
+ * @param enableCancel 是否启用取消按钮
  * @constructor
+ * 因为涉及到自定义内容区块，所以需要先加载模版，模版的css选择器不能依赖于父级元素，否则可能不生效
  */
-function ActionSheet(selector){
-    var self = this;
+function ActionSheet(selector, enableCancel){
+    var element,
+        contentElement,
+        cancelElement, // 取消元素
+        _this = this
+        ;
 
-    this.self = $(selector);
+    //默认不自动添加取消按钮
+    enableCancel = enableCancel || false;
+
+    this.id = "wx"+Math.random().toString().replace("0.", "");
+
+    contentElement = $(selector);
+
+    if(selector == undefined){
+        throw "参数丢失， 你必须传递模版元素的选择器";
+    }
+    if(contentElement.length !== 1){
+        throw "没有找到模版元素， 请检查选择器是否正确： '"+selector+"'";
+    }
+
+    cancelElement = enableCancel ? '<div class="weui_actionsheet_action">'+
+                            '            <div class="weui_actionsheet_cell actionsheet_cancel">取消</div>'+
+                            '       </div>' : "";
+
+    element = '<div id="'+this.id+'" style="display: none">'+
+        '    <div class="weui_mask_transition weui_fade_toggle mask" style="display: block"></div>'+
+        '    <div class="weui_actionsheet">'+
+        '        <!--内容块-->'+
+                contentElement.html()+
+                cancelElement+
+        '    </div>'+
+        '</div>';
+
+    contentElement.remove();
+    contentElement = null;
+
+    this.body = $("body");
+    this.body.append(element);
+
+    this.self = $("#"+this.id);
 
     this.mask = this.self.find(".mask");
     this.sheet = this.self.find(".weui_actionsheet");
     this.cancelBtn = this.self.find(".actionsheet_cancel");
 
+
+
     this.cancelBtn.on('click', function () {
-        self.hide();
+        _this.hide();
     });
 }
 
