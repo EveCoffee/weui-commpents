@@ -1,0 +1,16 @@
+{
+  "name": "weui-components",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "jquery": "^2.2.1",
+    "weui": "^0.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "冷色的咖啡",
+  "license": "MIT"
+}

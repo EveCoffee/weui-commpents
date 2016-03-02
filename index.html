@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Title</title>
+    <link rel="stylesheet" href="node_modules/weui/dist/style/weui.css">
+    <style>
+        .a{
+            transition: all 0.5s;
+        }
+        .weui_mask{
+            z-index: 3;
+        }
+    </style>
+</head>
+<body>
+
+<br><br><br><br>
+<div class="bd spacing">
+    <a href="javascript:;" class="weui_btn weui_btn_default" onclick="showConfirm()">显示Confirm框（询问框）</a>
+    <a href="javascript:;" class="weui_btn weui_btn_default" onclick="showAlert()">显示Alert(确认框)</a>
+    <a href="javascript:;" class="weui_btn weui_btn_default" onclick="showSuccess()">显示Success框(已完成)</a>
+    <a href="javascript:;" class="weui_btn weui_btn_default" onclick="showLoading()">显示Loading框(正在加载)</a>
+    <a href="javascript:;" class="weui_btn weui_btn_default" onclick="showActionSheet()">显示ActionSheet</a>
+</div>
+
+
+<div id="actionSheet_wrap" style="display: none">
+    <div class="weui_mask_transition weui_fade_toggle mask" id="mask" style="display: block"></div>
+    <div class="weui_actionsheet weui_actionsheet_toggle" id="weui_actionsheet">
+        <div class="weui_actionsheet_menu">
+            <div class="weui_actionsheet_cell">示例菜单</div>
+            <div class="weui_actionsheet_cell">示例菜单</div>
+            <div class="weui_actionsheet_cell">示例菜单</div>
+            <div class="weui_actionsheet_cell">示例菜单</div>
+        </div>
+        <div class="weui_actionsheet_action">
+            <div class="weui_actionsheet_cell actionsheet_cancel" id="actionsheet_cancel">取消</div>
+        </div>
+    </div>
+</div>
+
+<!--
+<div class="bd" id="search">
+    &lt;!&ndash;<a href="javascript:;" class="weui_btn weui_btn_primary">点击展现searchBar</a>&ndash;&gt;
+    <div class="weui_search_bar " id="search_bar">
+        <form class="weui_search_outer">
+            <div class="weui_search_inner">
+                <i class="weui_icon_search"></i>
+                <input type="search" class="weui_search_input" id="search_input" placeholder="搜索" required="">
+                <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+            </div>
+            <label for="search_input" class="weui_search_text" id="search_text">
+                <i class="weui_icon_search"></i>
+                <span>搜索</span>
+            </label>
+        </form>
+        <a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
+    </div>
+    <div class="weui_cells weui_cells_access search_show" id="search_show">
+
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>实时搜索文本</p>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>实时搜索文本</p>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>实时搜索文本</p>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<script src="js/weui-coffee.js"></script>
+<script>
+    $(function () {
+        'use strict';
+
+
+
+        $.fn.WeActionSheet = function () {
+            var _this = $(this);
+
+        };
+
+
+        function SearchSync(elementId){
+            if(!elementId){
+                throw "必须传递一个id进来， 否则罢工";
+            }
+
+            var _this = this;
+
+            this.self = $("#"+elementId);
+            this.searchBar = this.self.find(".weui_search_bar");
+            this.searchInput = this.searchBar.find("input");
+            this.form = this.searchBar.find("form");
+            this.searchTips = this.self.find("#search_show");
+
+            this.searchTipList = [
+                "实时搜索文本1",
+                "实时搜索文本2",
+                "实时搜索文本3",
+                "实时搜索文本4"
+            ];
+
+            //选中提示列表
+            this.searchTips.on("click", function (event) {
+                console.log(event);
+            });
+
+            //输入框内容变动
+            this.searchInput.on("keyup", function (event) {
+                console.log(event);
+                var _input = this;
+
+                _this.searchTipList = [];
+
+                if(_input.value == "") {
+                    _this.render();
+                    return;
+                }
+
+                var mailList = [
+                        "@qq.com",
+                        "@163.com",
+                        "@gmail.com",
+                        "@sina.com",
+                        "@sina.cn",
+                        "@live.com",
+                        "@outlook.com"
+                ];
+
+                mailList.forEach(function (ele) {
+                    _this.searchTipList.push(_input.value+ele);
+                });
+
+                _this.render();
+            }).on("focus", function (event) {
+                console.log(event);
+                _this.searchBar.addClass("weui_search_focusing");
+                _this.searchTips.show();
+            }).on("blur", function () {
+                _this.searchBar.removeClass("weui_search_focusing");
+                _this.searchTips.hide();
+            });
+
+            this.render();
+        }
+
+        SearchSync.prototype = {
+
+            render: function () {
+                var _this = this;
+
+                this.searchTips.empty();
+                this.searchTipList.forEach(function (str, index) {
+
+                    var e = `
+                        <div class="weui_cell">
+                                    <div class="weui_cell_bd weui_cell_primary">
+                                        <p>${str}</p>
+                                    </div>
+                                </div>
+                    `;
+
+                    _this.searchTips.append(e);
+                });
+            }
+        };
+
+        var search = new SearchSync("search");
+
+
+    });
+
+    /*
+     var a = new WeAlert("提示", "帐号或者密码错误");
+     a.ok(function () {
+     console.log("你是一个信息框， 点击了确定");
+     });*/
+
+    //var toast = new WeToast();
+
+    /*
+     var loading = new WeLoading();
+     setTimeout(function () {
+     loading.hide();
+     }, 3000);*/
+    function showConfirm(){
+        var note = new WeConfirm("提示", "我是一个对话框");
+        note.ok(function () {
+            console.info("HaHa! 我知道你点击了确定");
+        }).cancel(function () {
+            console.warn("HaHa! 我知道你点击了取消");
+        });
+    }
+
+    function showAlert(){
+        var a = new WeAlert("提示", "帐号或者密码错误");
+        a.ok(function () {
+            console.log("你是一个信息框， 点击了确定");
+        });
+    }
+
+    function showSuccess(){
+        var toast = new WeToast();
+    }
+
+    function showLoading(){
+        var loading = new WeLoading();
+        setTimeout(function () {
+            loading.hide();
+        }, 3000);
+    }
+
+    function showActionSheet(){
+        var sheet = new ActionSheet("#actionSheet_wrap");
+        sheet.show();
+    }
+
+</script>
+
+</body>
+</html>
